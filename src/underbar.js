@@ -7,6 +7,8 @@
   // seem very useful, but remember it--if a function needs to provide an
   // iterator when the user does not pass one in, this will be handy.
   _.identity = function(val) {
+    return val; 
+  //  statement ? true do this : false do this
   };
 
   /**
@@ -37,6 +39,9 @@
   // Like first, but for the last elements. If n is undefined, return just the
   // last element.
   _.last = function(array, n) {
+    if (n === 0) { return []; }
+    if (n > array.length) { return array;}
+    return n === undefined ? array[array.length - 1] : array.slice(n, array.length);
   };
 
   // Call iterator(value, key, collection) for each element of collection.
@@ -45,6 +50,15 @@
   // Note: _.each does not have a return value, but rather simply runs the
   // iterator function over each item in the input collection.
   _.each = function(collection, iterator) {
+    if (Array.isArray(collection)) {
+      for (var i = 0; i < collection.length; i++){
+        iterator(collection[i], i, collection);
+      }
+    } else if (typeof collection === 'object') {
+      for (var key in collection) {
+        iterator(collection[key], key, collection);
+      }
+    }
   };
 
   // Returns the index at which value can be found in the array, or -1 if value
@@ -66,16 +80,48 @@
 
   // Return all elements of an array that pass a truth test.
   _.filter = function(collection, test) {
+    var res = [];
+    for (var i = 0; i < collection.length; i++) {
+      if (test(collection[i])) {
+        res.push(collection[i]);
+      }
+    }
+    return res;
   };
 
   // Return all elements of an array that don't pass a truth test.
   _.reject = function(collection, test) {
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
+    var res = [];
+    for (var i = 0; i < collection.length; i++) {
+      if (!test(collection[i])) {
+        res.push(collection[i]);
+      }
+    }
+    return res;
   };
-
+//_uniq(array, true, iterator)
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
+    var res = [];
+    if(isSorted) {
+      var iRes = [];
+      for (var i = 0; i < array.length; i++) {
+        if (!iRes.includes(iterator(array[i]))) {
+          iRes.push(iterator(array[i]));
+          res.push(array[i]);
+        }
+      }
+    } else {
+      for (var i = 0; i < array.length; i++){
+        if (!res.includes(array[i])){
+          res.push(array[i]);
+        }
+      }
+    }
+
+    return res;
   };
 
 
@@ -242,6 +288,15 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var temp = array.slice();
+    var res = [];
+    var randIndex;
+    while (res.length !== array.length) {
+      randIndex = Math.floor(Math.random() * (temp.length));
+      res.push(temp[randIndex]);
+      temp.splice(randIndex, 1); //Array.splice(start, deletecount, insertelem)
+    }
+    return res;
   };
 
 
