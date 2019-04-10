@@ -92,7 +92,7 @@
 
       it('fails for a collection of all-falsy values', function() {
         // Replace this line with an `expect` statement that tests
-        expect(_.every([0, null, false], _.identity)).to.be.true;
+        expect(_.every([0, null, false], _.identity)).to.be.false;
         // the behavior described by the `it` string
         
       });
