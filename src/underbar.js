@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  window._ = {};
+ window._ = {};
 
   // Returns whatever value is passed as the argument. This function doesn't
   // seem very useful, but remember it--if a function needs to provide an
@@ -127,6 +127,11 @@
 
   // Return the results of applying an iterator to each element.
   _.map = function(collection, iterator) {
+    var results = [];
+    for (var i = 0; i < collection.length; i++) {
+      results.push(iterator(collection[i]));
+    }
+    return results;
     // map() is a useful primitive iteration function that works a lot
     // like each(), but in addition to running the operation on all
     // the members, it also maintains an array of results.
@@ -171,7 +176,33 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
+    //(arguments[2] !== undefined) ? accumulator : accumulator = collection[0];
+    _.each(collection, function(element, i) {
+        if (accumulator === undefined && i===0) {
+          accumulator = collection[0];
+        } else {
+          accumulator = iterator(accumulator, element);
+        }
+      });
+
+    
+    // if (arguments[2] !== undefined) {
+    //   for (var i = 0; i < collection.length; i++) {
+    //     iterator(accumulator, collection[i])
+    //   }
+    // } else {
+    //     accumulator = collection[0];
+    //     for (var i = 1; i < collection.length; i++) {
+    //       var iterReturns = iterator(accumulator, collection[i]);
+    //       iterator(accumulator, collection[i])
+        
+    //     }
+    //   }
+    
+    return accumulator;
   };
+
+
 
   // Determine if the array or object contains a given value (using `===`).
   _.contains = function(collection, target) {
