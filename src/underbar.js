@@ -1,7 +1,7 @@
 (function() {
   'use strict';
-
- window._ = {};
+window._ = {};
+//let _ = {};
 
   // Returns whatever value is passed as the argument. This function doesn't
   // seem very useful, but remember it--if a function needs to provide an
@@ -186,18 +186,6 @@
       });
 
     
-    // if (arguments[2] !== undefined) {
-    //   for (var i = 0; i < collection.length; i++) {
-    //     iterator(accumulator, collection[i])
-    //   }
-    // } else {
-    //     accumulator = collection[0];
-    //     for (var i = 1; i < collection.length; i++) {
-    //       var iterReturns = iterator(accumulator, collection[i]);
-    //       iterator(accumulator, collection[i])
-        
-    //     }
-    //   }
     
     return accumulator;
   };
@@ -220,7 +208,44 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+    if (iterator === undefined) {
+      iterator = _.identity;
+    }
+    var result = true;
+    // var falsy = [null, 0, false, undefined];
+    return _.reduce(collection, function(acc, elements) {
+        if (!iterator(elements)) {      
+          result = false;
+        } else {
+          result = iterator(elements);
+        }
+
+     }, result);
+
+  //   if (Array.isArray(collection)) {
+  //     for (var i = 0; i < collection.length; i++) {
+  //         if (result === false || collection[i] === null || collection[i] === undefined || collection[i] === 0 || collection[i] === false) {
+  //             return false;
+  //         } else if (result === true) {
+  //             result = iterator(collection[i]);
+  //         }
+  //     }
+  // } else {
+  //     for (var key in collection) {
+  //         if (result === false || collection[key] === null || collection[key] === undefined || collection[key] === 0 || collection[key] === false) {
+  //             return false;
+  //         } else if (result === true) {
+  //             result = iterator(collection[key]);
+  //         }
+  //     }
+  // }
+
+  return result;
   };
+  // debugger;
+  // var test = _.every([true, {}, 1], _.identity);
+
+
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
