@@ -208,49 +208,56 @@ window._ = {};
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
-    if (iterator === undefined) {
-      iterator = _.identity;
-    }
-    var result = true;
-    // var falsy = [null, 0, false, undefined];
-    return _.reduce(collection, function(acc, elements) {
-        if (!iterator(elements)) {      
-          result = false;
+    var status = true;
+    var iterator = iterator || _.identity;
+
+    if (collection.length === 0) {
+      status = true;
+    } else {
+      status = _.reduce(collection, function(status, item) {
+        if (status === false) {
+          return false;
         } else {
-          result = iterator(elements);
+          return !!(iterator(item));
         }
+      }, status);
+    }
 
-     }, result);
+    return status;
+    /*
+    var status = true;
 
-  //   if (Array.isArray(collection)) {
-  //     for (var i = 0; i < collection.length; i++) {
-  //         if (result === false || collection[i] === null || collection[i] === undefined || collection[i] === 0 || collection[i] === false) {
-  //             return false;
-  //         } else if (result === true) {
-  //             result = iterator(collection[i]);
-  //         }
-  //     }
-  // } else {
-  //     for (var key in collection) {
-  //         if (result === false || collection[key] === null || collection[key] === undefined || collection[key] === 0 || collection[key] === false) {
-  //             return false;
-  //         } else if (result === true) {
-  //             result = iterator(collection[key]);
-  //         }
-  //     }
-  // }
-
-  return result;
+    iterator = iterator || _.identuty;
+    console.log(collection);
+    status = _.reduce(collection, function(status, item){
+      if(status === false) {
+        return false;
+      }
+      return !!iterator(item);
+    }, true);
+    console.log("res: " + status);
+    return status;*/
   };
-  // debugger;
-  // var test = _.every([true, {}, 1], _.identity);
-
-
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    var status = false;
+    var iterator = iterator || _.identity;
+    if (collection.length === 0) {
+      return false;
+    } else {
+      status = _.reduce(collection, function(status, item) {
+        if(status === true){
+          return true;
+        } else {
+          return !!(iterator(item));
+        }
+      },status);
+    }
+    return status;
+    
   };
 
 
@@ -273,11 +280,35 @@ window._ = {};
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+
+    var res = arguments[0];
+    //amount of the input
+    var arg = arguments.length;
+    for (var i = 1; i < arg; i++){
+      for(var key in arguments[i]) {
+        res[key] = arguments[i][key];
+      }
+    }
+
+    return res;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    var res = arguments[0];
+    //amount of the input
+    var arg = arguments.length;
+    for (var i = 1; i < arg; i++){
+      for(var key in arguments[i]) {
+        //skip if res[key] exists and input object otherwise
+        if (res[key] === undefined) {
+          res[key] = arguments[i][key];
+        }
+      }
+    }
+
+    return res;
   };
 
 
@@ -321,6 +352,56 @@ window._ = {};
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+
+    var resTable = {};
+
+    return function() {
+      var key = JSON.stringify(arguments);
+      if(resTable[key]){
+        return resTable[key];
+      }
+      else {
+        var val = func.apply(this, arguments);
+        resTable[key] = val;
+        return val;
+      }
+    }
+
+
+    // var calledArg = [];
+    // var res = [];
+    // var exist = function(ary1, ary2) {
+    //   for var(i = 0; i < ary1.length; i++){
+    //     if (ary1[i] !== ary2[i]){
+    //       return false;
+    //     }
+    //     return true;
+    //   }
+    // }
+    // return function() {
+    //   var match = false;
+    //   for (var i = 0; i < calledArg.length; i++){
+    //     if (arguments.length === calledArg[i].length) {
+    //       match = true;
+    //     }
+    //   }
+    //   //if not match, store the input and result
+    //   if(!match) {
+    //     calledArg.push(arguments);
+    //     res.push(func.apply(this, arguments));
+    //     return res[res.length - 1];
+    //   } else {
+    //     //if match, check input exist or not
+    //     for (var i = 0; i < calledArg.length; i++){
+    //       if (exist(arguments, calledArg[i])){
+    //         return res[i];
+    //       }
+    //     }
+    //     calledArg.push(arguments);
+    //     res.push(func.apply(this, arguments));
+    //     return res[res.length - 1];
+    //   }
+    // }
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -330,6 +411,10 @@ window._ = {};
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    var args=Array.prototype.slice.call(arguments, 2);
+    return setTimeout(function(){
+      return func.apply(this, args);
+    }, wait);
   };
 
 
